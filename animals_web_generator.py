@@ -28,7 +28,6 @@ def generate_html_data(animals_data):
 
 
 
-
 def main() :
     animals_data = load_data("animals_data.json")
     generate_html_data(animals_data)
