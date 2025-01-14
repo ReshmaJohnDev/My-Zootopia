@@ -23,14 +23,16 @@ def generate_html_data(animals_data):
         diet = characteristics.get("diet")
         location = animal_data.get("locations", [])[0]
         animal_type = characteristics.get("type")
-        animal_data_string += '<li class="cards__item">'
-        animal_data_string += f"Name: {name}<br/>\n"
+        animal_data_string += "<li class='cards__item'>\n"
+        animal_data_string += "<div class ='card__title' > "f"{name}</div >\n"
+        animal_data_string += "<p class='card__text'>\n"
         if diet is not None:
-            animal_data_string += f"Diet: {diet}<br/>\n"
+            animal_data_string += "<strong>Diet:</strong> "f"{diet}<br/>\n"
         if location is not None:
-            animal_data_string += f"Location: {location}<br/>\n"
+            animal_data_string += "<strong>Location:</strong> "f"{location}<br/>\n"
         if animal_type is not None:
-            animal_data_string += f"Type: {animal_type}<br/>\n"
+            animal_data_string += "<strong>Type:</strong> "f"{animal_type}<br/>\n"
+        animal_data_string += '</p>\n'
         animal_data_string += '</li>'
     return animal_data_string
 
