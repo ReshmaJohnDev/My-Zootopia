@@ -1,20 +1,13 @@
-import requests
+from data_fetcher import fetch_data
 
 
-URL = "https://api.api-ninjas.com/v1/animals"
-KEY_VALUE = "X-Api-Key=u0e9t1G4TQm22fEUoeK10Q==bEhGG2YX3v10GQrY"
 WEBSITE_FILE_NAME = "animals.html"
 TEMPLATE_FILE_NAME = "animals_template.html"
 
 
-def get_animal_data(url):
-    res = requests.get(url)
-    return res.json()
-
-
 def load_html_data(file_path):
     """
-    This fn reads the "animal_template.html" file .
+    This fn reads the "animal_template.html" file.
     :param file_path:
     :return: file content
     """
@@ -79,7 +72,7 @@ def generate_html_data(animals_data):
     return  "".join(serialize_animal(animal) for animal in animals_data)
 
 
-def formulate_webpage(website_template, animal_data_string):
+def website_generator(website_template, animal_data_string):
     """
     This fn adds animal data into the template file which is used to
     generate the final website file .
@@ -99,13 +92,12 @@ def main() :
     """
     website_template = load_html_data(TEMPLATE_FILE_NAME)
     animal_name = input("Please enter the animal name: ")
-    req_url = f"{URL}?name={animal_name}&{KEY_VALUE}"
-    animals_data = get_animal_data(req_url)
+    animals_data = fetch_data(animal_name)
     if animals_data :
         animal_data_string = generate_html_data(animals_data)
     else :
         animal_data_string= f"<h2>The animal {animal_name} doesn't exist.</h2>"
-    formulate_webpage(website_template, animal_data_string)
+    website_generator(website_template, animal_data_string)
 
 
 if __name__ == "__main__":
