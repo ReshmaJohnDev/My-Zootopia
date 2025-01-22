@@ -1,4 +1,15 @@
-import json
+import requests
+
+
+URL = "https://api.api-ninjas.com/v1/animals"
+KEY_VALUE = "X-Api-Key=u0e9t1G4TQm22fEUoeK10Q==bEhGG2YX3v10GQrY"
+FILE_NAME = "animals.html"
+
+
+
+def get_animal_data(url):
+    res = requests.get(url)
+    return res.json()
 
 
 def load_html_data(file_path):
@@ -11,22 +22,13 @@ def load_html_data(file_path):
         return handle.read()
 
 
-def load_data(file_path):
-    """
-    This fn reads the "animal_data.json" file .
-    :param file_path:
-    :return: file content
-    """
-    with open(file_path, "r") as handle:
-        return json.load(handle)
-
-
-def write_to_file(data):
+def write_to_file(data, file_name):
     """
     This fn writes into "animals.html" file .
+    :param file_name:
     :param data:
     """
-    with open("animals.html", "w") as handle:
+    with open(file_name, "w") as handle:
         handle.write(data)
 
 
@@ -78,15 +80,13 @@ def generate_html_data(animals_data):
 
 def main() :
     """
-    This is the main function through wich the sub functions get invoked .
+    This is the main function through which the sub functions get invoked .
     """
-
     animal_data_html = load_html_data("animals_template.html")
-    animals_data = load_data("animals_data.json")
-    animal_data_string = generate_html_data(animals_data)
-    new_data = animal_data_html.replace("__REPLACE_ANIMALS_INFO__", animal_data_string)
-    write_to_file(new_data)
-
+    animal_name = "fox"
+    req_url = URL+"?name="+f"{animal_name}"+"&"+f"{KEY_VALUE}"
+    animals_data = get_animal_data(req_url)
+    print(animals_data)
 
 if __name__ == "__main__":
     main()
