@@ -6,10 +6,14 @@ KEY_VALUE = "X-Api-Key=u0e9t1G4TQm22fEUoeK10Q==bEhGG2YX3v10GQrY"
 FILE_NAME = "animals.html"
 
 
-
 def get_animal_data(url):
     res = requests.get(url)
     return res.json()
+
+
+def get_user_inputs():
+    animal_name = input("Enter the User Name: ")
+    return animal_name
 
 
 def load_html_data(file_path):
@@ -82,11 +86,14 @@ def main() :
     """
     This is the main function through which the sub functions get invoked .
     """
-    animal_data_html = load_html_data("animals_template.html")
-    animal_name = "fox"
+    animal_data_website_template = load_html_data("animals_template.html")
+    animal_name = get_user_inputs()
     req_url = URL+"?name="+f"{animal_name}"+"&"+f"{KEY_VALUE}"
     animals_data = get_animal_data(req_url)
-    print(animals_data)
+    animal_data_string = generate_html_data(animals_data)
+    new_data = animal_data_website_template.replace("__REPLACE_ANIMALS_INFO__", animal_data_string)
+    write_to_file(new_data, FILE_NAME)
+    print(f"Website was successfully generated to the file {FILE_NAME}.")
 
 if __name__ == "__main__":
     main()
