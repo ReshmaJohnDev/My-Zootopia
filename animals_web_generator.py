@@ -3,17 +3,13 @@ import requests
 
 URL = "https://api.api-ninjas.com/v1/animals"
 KEY_VALUE = "X-Api-Key=u0e9t1G4TQm22fEUoeK10Q==bEhGG2YX3v10GQrY"
-FILE_NAME = "animals.html"
+WEBSITE_FILE_NAME = "animals.html"
+TEMPLATE_FILE_NAME = "animals_template.html"
 
 
 def get_animal_data(url):
     res = requests.get(url)
     return res.json()
-
-
-def get_user_inputs():
-    animal_name = input("Enter the User Name: ")
-    return animal_name
 
 
 def load_html_data(file_path):
@@ -38,8 +34,9 @@ def write_to_file(data, file_name):
 
 def serialize_animal(animal_obj):
     """
-    This fn iterates through the animal_obj and extract the required data and formulates,
-    serialized data ready to be written into "animals.html" file .
+    This fn iterates through the animal_obj and extract the
+    required data and formulates,serialized data ready to be written into
+    "animals.html" file .
     :param animal_obj:
     :return: file content
     """
@@ -47,7 +44,7 @@ def serialize_animal(animal_obj):
     name = animal_obj.get("name")
     characteristics = animal_obj.get("characteristics", {})
     diet = characteristics.get("diet")
-    location = animal_obj.get("locations", [])[0]
+    location = animal_obj.get("locations", [])
     common_name = characteristics.get("common_name")
     lifespan = characteristics.get("lifespan")
     animal_type = characteristics.get("type")
@@ -59,8 +56,8 @@ def serialize_animal(animal_obj):
 
     if diet is not None:
         animal_data_string += "<li><strong>Diet:</strong> "f"{diet}</li>\n"
-    if location is not None:
-        animal_data_string += "<li><strong>Location:</strong> "f"{location}</li>\n"
+    if len(location)>0:
+        animal_data_string += "<li><strong>Location:</strong> "f"{location[0]}</li>\n"
     if animal_type is not None:
         animal_data_string += "<li><strong>Type:</strong> "f"{animal_type}</li>\n"
     if common_name is not None:
@@ -82,18 +79,34 @@ def generate_html_data(animals_data):
     return  "".join(serialize_animal(animal) for animal in animals_data)
 
 
+def formulate_webpage(website_template, animal_data_string):
+    """
+    This fn adds animal data into the template file which is used to
+    generate the final website file .
+    :param website_template:
+    :param animal_data_string:
+    """
+    website_content = website_template.replace("__REPLACE_ANIMALS_INFO__",
+                                               animal_data_string)
+    write_to_file(website_content, WEBSITE_FILE_NAME)
+    print(f"Website was successfully generated to the file "
+          f"{WEBSITE_FILE_NAME}.")
+
+
 def main() :
     """
     This is the main function through which the sub functions get invoked .
     """
-    animal_data_website_template = load_html_data("animals_template.html")
-    animal_name = get_user_inputs()
-    req_url = URL+"?name="+f"{animal_name}"+"&"+f"{KEY_VALUE}"
+    website_template = load_html_data(TEMPLATE_FILE_NAME)
+    animal_name = input("Please enter the animal name: ")
+    req_url = f"{URL}?name={animal_name}&{KEY_VALUE}"
     animals_data = get_animal_data(req_url)
-    animal_data_string = generate_html_data(animals_data)
-    new_data = animal_data_website_template.replace("__REPLACE_ANIMALS_INFO__", animal_data_string)
-    write_to_file(new_data, FILE_NAME)
-    print(f"Website was successfully generated to the file {FILE_NAME}.")
+    if animals_data :
+        animal_data_string = generate_html_data(animals_data)
+    else :
+        animal_data_string= f"<h2>The animal {animal_name} doesn't exist.</h2>"
+    formulate_webpage(website_template, animal_data_string)
+
 
 if __name__ == "__main__":
     main()
