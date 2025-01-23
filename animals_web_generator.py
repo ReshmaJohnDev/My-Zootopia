@@ -4,7 +4,6 @@ from data_fetcher import fetch_data
 WEBSITE_FILE_NAME = "animals.html"
 TEMPLATE_FILE_NAME = "animals_template.html"
 
-
 def load_html_data(file_path):
     """
     This fn reads the "animal_template.html" file.
@@ -90,14 +89,19 @@ def main() :
     """
     This is the main function through which the sub functions get invoked .
     """
-    website_template = load_html_data(TEMPLATE_FILE_NAME)
-    animal_name = input("Please enter the animal name: ")
-    animals_data = fetch_data(animal_name)
-    if animals_data :
-        animal_data_string = generate_html_data(animals_data)
-    else :
-        animal_data_string= f"<h2>The animal {animal_name} doesn't exist.</h2>"
-    website_generator(website_template, animal_data_string)
+    try:
+        website_template = load_html_data(TEMPLATE_FILE_NAME)
+        animal_name = ""
+        while not animal_name:  # Repeat prompting the user to enter a non-empty string
+            animal_name = input("Please enter the animal name: ")
+        animals_data = fetch_data(animal_name)
+        if animals_data:
+            animal_data_string = generate_html_data(animals_data)
+        else:
+            animal_data_string = f"<h2>The animal {animal_name} doesn't exist.</h2>"
+        website_generator(website_template, animal_data_string)
+    except Exception  as e:
+        print(f"Failed to fetch animal data: {e}")
 
 
 if __name__ == "__main__":
